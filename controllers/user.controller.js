@@ -45,10 +45,10 @@ exports.login = async (req, res) => {
             _id: user._id,
             email: user.email,
           },
-          SECRET_KEY,
+          process.env.SECRET_KEY,
           { expiresIn: "2d" }
         );
-        const reftoken = jwt.sign({ _id: user._id }, SECRET_KEY, {
+        const reftoken = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, {
           expiresIn: process.env.JWT_EXPIRE,
         });
         return res
@@ -66,12 +66,12 @@ exports.getrefToken = async (req, res) => {
   const ref_token = req.headers?.authorization?.split(" ")[1];
   try {
     if (ref_token) {
-      jwt.verify(ref_token, SECRET_KEY, (err, decoded) => {
+      jwt.verify(ref_token, process.env.SECRET_KEY, (err, decoded) => {
         if (err) {
           return res.status(401).send("Please Login Again");
         } else {
           const { id } = decoded;
-          const newToken = jwt.sign(({ id }, SECRET_KEY, { expiresIn: process.env.JWT_EXPIRE }));
+          const newToken = jwt.sign(({ id }, process.env.SECRET_KEY, { expiresIn: process.env.JWT_EXPIRE }));
           return res
             .status(200)
             .send({ newToken, message: "Login Successfully" });
